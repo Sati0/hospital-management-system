@@ -33,7 +33,8 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/api/auth', require('./routes/auth'));
+// Use correct file names
+app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/doctors', require('./routes/doctors'));
 app.use('/api/appointments', require('./routes/appointments'));
 

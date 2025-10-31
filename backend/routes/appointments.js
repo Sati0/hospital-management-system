@@ -1,137 +1,81 @@
 const express = require('express');
 const router = express.Router();
 const Appointment = require('../models/Appointment');
-const Doctor = require('../models/Doctor');
-const { auth } = require('../middleware/auth');
 
-// @route   POST /api/appointments
-// @desc    Create new appointment
-// @access  Private
-router.post('/', auth, async (req, res) => {
+// Create appointment (NO AUTH for testing)
+router.post('/', async (req, res) => {
   try {
-    const { doctorId, appointmentDate, timeSlot, reason } = req.body;
+    console.log('Appointment request received:', req.body);
+    
+    const { doctorId, patientId, date, timeSlot, reason } = req.body;
 
-    // Get doctor details
-    const doctor = await Doctor.findById(doctorId);
-    if (!doctor) {
-      return res.status(404).json({ message: 'Doctor not found' });
+    // Validate input
+    if (!doctorId || !patientId || !date || !timeSlot || !reason) {
+      return res.status(400).json({ 
+        message: 'Missing required fields',
+        received: { doctorId, patientId, date, timeSlot, reason }
+      });
     }
 
-    // Check if slot is already booked
-    const existingAppointment = await Appointment.findOne({
-      doctor: doctorId,
-      appointmentDate: new Date(appointmentDate),
-      timeSlot,
-      status: { $ne: 'cancelled' }
-    });
-
-    if (existingAppointment) {
-      return res.status(400).json({ message: 'Time slot already booked' });
-    }
-
-    // Create appointment
     const appointment = new Appointment({
-      patient: req.userId,
       doctor: doctorId,
-      appointmentDate: new Date(appointmentDate),
+      patient: patientId,
+      date: new Date(date),
       timeSlot,
       reason,
-      amount: doctor.feesPerSession,
       status: 'pending'
     });
 
     await appointment.save();
-
-    const populatedAppointment = await Appointment.findById(appointment._id)
-      .populate('patient', 'name email phone')
-      .populate({
-        path: 'doctor',
-        populate: {
-          path: 'user',
-          select: 'name email phone'
-        }
-      });
-
+    console.log('Appointment saved successfully:', appointment);
+    
     res.status(201).json({ 
-      message: 'Appointment created successfully',
-      appointment: populatedAppointment 
+      message: 'Appointment booked successfully', 
+      appointment 
     });
   } catch (error) {
-    console.error('Create appointment error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error creating appointment:', error);
+    res.status(500).json({ 
+      message: 'Error booking appointment',
+      error: error.message 
+    });
   }
 });
 
-// @route   GET /api/appointments
-// @desc    Get user's appointments
-// @access  Private
-router.get('/', auth, async (req, res) => {
+// Get user appointments
+router.get('/user/:userId', async (req, res) => {
   try {
-    const appointments = await Appointment.find({ patient: req.userId })
+    const appointments = await Appointment.find({ patient: req.params.userId })
       .populate({
         path: 'doctor',
-        populate: {
-          path: 'user',
-          select: 'name email phone'
-        }
+        populate: { path: 'user', select: 'name email phone' }
       })
-      .sort({ appointmentDate: -1 });
-
-    res.json({ appointments });
+      .sort({ date: -1 });
+    
+    res.json(appointments);
   } catch (error) {
-    console.error('Get appointments error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching appointments:', error);
+    res.status(500).json({ message: 'Error fetching appointments' });
   }
 });
 
-// @route   GET /api/appointments/:id
-// @desc    Get appointment by ID
-// @access  Private
-router.get('/:id', auth, async (req, res) => {
+// Cancel appointment
+router.put('/:id/cancel', async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.id)
-      .populate('patient', 'name email phone')
-      .populate({
-        path: 'doctor',
-        populate: {
-          path: 'user',
-          select: 'name email phone'
-        }
-      });
-
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { status: 'cancelled' },
+      { new: true }
+    );
+    
     if (!appointment) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
-
-    res.json(appointment);
+    
+    res.json({ message: 'Appointment cancelled', appointment });
   } catch (error) {
-    console.error('Get appointment error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// @route   PATCH /api/appointments/:id/cancel
-// @desc    Cancel appointment
-// @access  Private
-router.patch('/:id/cancel', auth, async (req, res) => {
-  try {
-    const appointment = await Appointment.findById(req.params.id);
-
-    if (!appointment) {
-      return res.status(404).json({ message: 'Appointment not found' });
-    }
-
-    if (appointment.patient.toString() !== req.userId.toString()) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-
-    appointment.status = 'cancelled';
-    await appointment.save();
-
-    res.json({ message: 'Appointment cancelled successfully', appointment });
-  } catch (error) {
-    console.error('Cancel appointment error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error cancelling appointment:', error);
+    res.status(500).json({ message: 'Error cancelling appointment' });
   }
 });
 

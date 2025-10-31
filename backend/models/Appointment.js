@@ -11,7 +11,7 @@ const appointmentSchema = new mongoose.Schema({
     ref: 'Doctor',
     required: true
   },
-  appointmentDate: {
+  date: {
     type: Date,
     required: true
   },
@@ -28,32 +28,10 @@ const appointmentSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'completed', 'cancelled'],
     default: 'pending'
   },
-  paymentStatus: {
-    type: String,
-    enum: ['pending', 'paid', 'refunded'],
-    default: 'pending'
-  },
-  amount: {
-    type: Number,
-    required: true
-  },
-  receiptNumber: {
-    type: String,
-    unique: true
-  },
-  notes: String,
   createdAt: {
     type: Date,
     default: Date.now
   }
-});
-
-// Generate receipt number before saving
-appointmentSchema.pre('save', function(next) {
-  if (!this.receiptNumber) {
-    this.receiptNumber = 'REC' + Date.now() + Math.floor(Math.random() * 1000);
-  }
-  next();
 });
 
 module.exports = mongoose.model('Appointment', appointmentSchema);

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-function AppointmentStatus({ apiUrl }) {
+function AppointmentStatus({ user }) {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const apiUrl = 'http://localhost:5000';
 
   useEffect(() => {
     fetchAppointments();
@@ -11,19 +14,15 @@ function AppointmentStatus({ apiUrl }) {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/appointments`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const response = await axios.get(`${apiUrl}/api/appointments/user/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await response.json();
       
-      // Filter only upcoming/pending appointments
-      const upcomingAppointments = (data.appointments || []).filter(
-        apt => apt.status !== 'completed' && apt.status !== 'cancelled'
+      // Filter for pending and confirmed appointments only
+      const activeAppointments = response.data.filter(
+        apt => apt.status === 'pending' || apt.status === 'confirmed'
       );
-      
-      setAppointments(upcomingAppointments);
+      setAppointments(activeAppointments);
     } catch (error) {
       console.error('Error fetching appointments:', error);
     } finally {
@@ -31,80 +30,65 @@ function AppointmentStatus({ apiUrl }) {
     }
   };
 
-  const handleCancel = async (appointmentId) => {
+  const cancelAppointment = async (id) => {
     if (!window.confirm('Are you sure you want to cancel this appointment?')) {
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/appointments/${appointmentId}/cancel`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        alert('✅ Appointment cancelled successfully');
-        fetchAppointments();
-      } else {
-        alert('❌ Failed to cancel appointment');
-      }
+      await axios.put(
+        `${apiUrl}/api/appointments/${id}/cancel`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('Appointment cancelled successfully');
+      fetchAppointments();
     } catch (error) {
-      console.error('Cancel error:', error);
-      alert('❌ Error cancelling appointment');
+      console.error('Error cancelling appointment:', error);
+      alert('Error cancelling appointment');
     }
   };
 
   if (loading) {
-    return <div className="content-card">Loading...</div>;
+    return <div>Loading appointments...</div>;
   }
 
   return (
-    <div className="content-card">
+    <div>
       <h2>Appointment Status</h2>
-
+      
       {appointments.length === 0 ? (
         <div className="empty-state">
-          <p>No upcoming appointments</p>
-          <p>Book an appointment from the Search Doctor page</p>
+          <p>No active appointments</p>
         </div>
       ) : (
         <div className="appointments-list">
-          {appointments.map(appointment => {
-            // Safe check for doctor data
-            const doctorName = appointment.doctor?.user?.name || 'Unknown Doctor';
-            const specialization = appointment.doctor?.specialization || 'N/A';
-            
-            return (
-              <div key={appointment._id} className="appointment-item">
-                <div className="appointment-header">
-                  <h3>Dr. {doctorName}</h3>
-                  <span className={`status-badge status-${appointment.status}`}>
-                    {appointment.status}
-                  </span>
-                </div>
-                
-                <div className="appointment-details">
-                  <p><strong>Specialization:</strong> {specialization}</p>
-                  <p><strong>Date:</strong> {new Date(appointment.appointmentDate).toLocaleDateString()}</p>
-                  <p><strong>Time:</strong> {appointment.timeSlot}</p>
-                  <p><strong>Reason:</strong> {appointment.reason}</p>
-                  <p><strong>Fee:</strong> ₹{appointment.amount}</p>
-                </div>
-
-                {appointment.status === 'pending' && (
-                  <button 
-                    className="cancel-btn"
-                    onClick={() => handleCancel(appointment._id)}
-                  >
-                    Cancel Appointment
-                  </button>
-                )}
+          {appointments.map((apt) => (
+            <div key={apt._id} className="appointment-item">
+              <div className="appointment-header">
+                <h3>{apt.doctor?.user?.name || 'Doctor'}</h3>
+                <span className={`status-badge status-${apt.status}`}>
+                  {apt.status}
+                </span>
               </div>
-            );
-          })}
+              <div className="appointment-details">
+                <p><strong>Specialization:</strong> {apt.doctor?.specialization}</p>
+                <p><strong>Date:</strong> {new Date(apt.date).toLocaleDateString()}</p>
+                <p><strong>Time:</strong> {apt.timeSlot}</p>
+                <p><strong>Reason:</strong> {apt.reason}</p>
+                <p><strong>Fees:</strong> ₹{apt.doctor?.feesPerSession}</p>
+              </div>
+              {apt.status === 'pending' && (
+                <button 
+                  className="cancel-btn"
+                  onClick={() => cancelAppointment(apt._id)}
+                >
+                  Cancel Appointment
+                </button>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

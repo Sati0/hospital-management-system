@@ -1,36 +1,43 @@
 import React from 'react';
 
 function PersonalDetails({ user }) {
-  if (!user) return <div>Loading...</div>;
+  if (!user) {
+    return (
+      <div>
+        <h2>Personal Details</h2>
+        <div className="empty-state">
+          <p>No user data available.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="content-card">
+    <div>
       <h2>Personal Details</h2>
-      
       <div className="personal-info">
         <div className="profile-image">
-          <img src={user.profileImage} alt={user.name} />
+          <img 
+            src="https://randomuser.me/api/portraits/men/32.jpg" 
+            alt="Profile" 
+          />
         </div>
-
         <div className="info-grid">
           <div className="info-item">
             <label>Name:</label>
-            <span>{user.name}</span>
+            <span>{user.name || 'N/A'}</span>
           </div>
-
           <div className="info-item">
             <label>Email:</label>
-            <span>{user.email}</span>
+            <span>{user.email || 'N/A'}</span>
           </div>
-
           <div className="info-item">
             <label>Phone:</label>
-            <span>{user.phone}</span>
+            <span>{user.phone || 'N/A'}</span>
           </div>
-
           <div className="info-item">
             <label>Role:</label>
-            <span className="role-badge">{user.role}</span>
+            <span className="role-badge">{user.role || 'patient'}</span>
           </div>
         </div>
       </div>

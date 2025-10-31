@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-function PreviousAppointments({ apiUrl }) {
+function PreviousAppointments({ user }) {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const apiUrl = 'http://localhost:5000';
 
   useEffect(() => {
     fetchAppointments();
@@ -11,18 +14,14 @@ function PreviousAppointments({ apiUrl }) {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/appointments`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const response = await axios.get(`${apiUrl}/api/appointments/user/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await response.json();
       
-      // Filter completed or cancelled appointments
-      const pastAppointments = (data.appointments || []).filter(
+      // Filter for completed and cancelled appointments
+      const pastAppointments = response.data.filter(
         apt => apt.status === 'completed' || apt.status === 'cancelled'
       );
-      
       setAppointments(pastAppointments);
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -32,44 +31,36 @@ function PreviousAppointments({ apiUrl }) {
   };
 
   if (loading) {
-    return <div className="content-card">Loading...</div>;
+    return <div>Loading previous appointments...</div>;
   }
 
   return (
-    <div className="content-card">
+    <div>
       <h2>Previous Appointments</h2>
-
+      
       {appointments.length === 0 ? (
         <div className="empty-state">
           <p>No previous appointments</p>
         </div>
       ) : (
         <div className="appointments-list">
-          {appointments.map(appointment => {
-            // Safe check for doctor data
-            const doctorName = appointment.doctor?.user?.name || 'Unknown Doctor';
-            const specialization = appointment.doctor?.specialization || 'N/A';
-            
-            return (
-              <div key={appointment._id} className="appointment-item history">
-                <div className="appointment-header">
-                  <h3>Dr. {doctorName}</h3>
-                  <span className={`status-badge status-${appointment.status}`}>
-                    {appointment.status}
-                  </span>
-                </div>
-                
-                <div className="appointment-details">
-                  <p><strong>Specialization:</strong> {specialization}</p>
-                  <p><strong>Date:</strong> {new Date(appointment.appointmentDate).toLocaleDateString()}</p>
-                  <p><strong>Time:</strong> {appointment.timeSlot}</p>
-                  <p><strong>Reason:</strong> {appointment.reason}</p>
-                  <p><strong>Fee:</strong> ₹{appointment.amount}</p>
-                  <p><strong>Receipt:</strong> {appointment.receiptNumber}</p>
-                </div>
+          {appointments.map((apt) => (
+            <div key={apt._id} className="appointment-item">
+              <div className="appointment-header">
+                <h3>{apt.doctor?.user?.name || 'Doctor'}</h3>
+                <span className={`status-badge status-${apt.status}`}>
+                  {apt.status}
+                </span>
               </div>
-            );
-          })}
+              <div className="appointment-details">
+                <p><strong>Specialization:</strong> {apt.doctor?.specialization}</p>
+                <p><strong>Date:</strong> {new Date(apt.date).toLocaleDateString()}</p>
+                <p><strong>Time:</strong> {apt.timeSlot}</p>
+                <p><strong>Reason:</strong> {apt.reason}</p>
+                <p><strong>Fees:</strong> ₹{apt.doctor?.feesPerSession}</p>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

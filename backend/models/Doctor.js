@@ -8,23 +8,7 @@ const doctorSchema = new mongoose.Schema({
   },
   specialization: {
     type: String,
-    required: true,
-    enum: [
-      'cardiology',
-      'dermatology',
-      'emergency medicine',
-      'general practice',
-      'intensive care medicine',
-      'neurology',
-      'obstetrics',
-      'pathology',
-      'pediatrics',
-      'psychiatry',
-      'surgery',
-      'anesthesia',
-      'dentist',
-      'pain medicine'
-    ]
+    required: true
   },
   qualification: {
     type: String,
@@ -38,27 +22,17 @@ const doctorSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  availableSlots: [{
-    day: String,
-    slots: [String]
-  }],
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String
+  availability: {
+    type: [String],
+    default: []
   },
   rating: {
     type: Number,
-    default: 0
+    default: 4.5
   },
-  reviewsCount: {
-    type: Number,
-    default: 0
-  },
-  isAvailable: {
-    type: Boolean,
-    default: true
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 

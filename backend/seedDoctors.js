@@ -4,103 +4,116 @@ const User = require('./models/User');
 const Doctor = require('./models/Doctor');
 require('dotenv').config();
 
-const sampleDoctors = [
-  // Cardiology - Male doctors
-  { name: 'Dr. Rajesh Kumar', email: 'rajesh.cardio@hospital.com', specialization: 'cardiology', qualification: 'MBBS, MD, DM (Cardiology)', experience: 15, fees: 1200, image: 'https://randomuser.me/api/portraits/men/32.jpg' },
-  { name: 'Dr. Amit Patel', email: 'amit.cardio@hospital.com', specialization: 'cardiology', qualification: 'MBBS, DNB (Cardiology)', experience: 10, fees: 900, image: 'https://randomuser.me/api/portraits/men/45.jpg' },
-  { name: 'Dr. Sanjay Mehta', email: 'sanjay.cardio@hospital.com', specialization: 'cardiology', qualification: 'MBBS, MD, FESC', experience: 18, fees: 1500, image: 'https://randomuser.me/api/portraits/men/67.jpg' },
-  // Cardiology - Female doctor
-  { name: 'Dr. Priya Sharma', email: 'priya.cardio@hospital.com', specialization: 'cardiology', qualification: 'MBBS, MD (Medicine)', experience: 12, fees: 1000, image: 'https://randomuser.me/api/portraits/women/44.jpg' },
+const doctorsData = [
+  // CARDIOLOGY - 5 doctors
+  { name: 'Dr. Rahul Mehta', spec: 'cardiology', exp: 20, fees: 2000, qual: 'MBBS, MD (Cardiology)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Sanjay Gupta', spec: 'cardiology', exp: 18, fees: 1800, qual: 'MBBS, DM (Cardiology)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Kavita Reddy', spec: 'cardiology', exp: 15, fees: 1700, qual: 'MBBS, MD (Cardiology)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Arun Sharma', spec: 'cardiology', exp: 22, fees: 2200, qual: 'MBBS, DNB (Cardiology)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Meera Iyer', spec: 'cardiology', exp: 16, fees: 1600, qual: 'MBBS, MD (Cardiology)', avail: ['Monday', 'Wednesday', 'Friday'] },
 
-  // Dermatology
-  { name: 'Dr. Anjali Rao', email: 'anjali.derm@hospital.com', specialization: 'dermatology', qualification: 'MBBS, MD (Dermatology)', experience: 8, fees: 800, image: 'https://randomuser.me/api/portraits/women/65.jpg' },
-  { name: 'Dr. Vikram Singh', email: 'vikram.derm@hospital.com', specialization: 'dermatology', qualification: 'MBBS, DVD', experience: 10, fees: 850, image: 'https://randomuser.me/api/portraits/men/22.jpg' },
-  { name: 'Dr. Neha Gupta', email: 'neha.derm@hospital.com', specialization: 'dermatology', qualification: 'MBBS, MD, DDVL', experience: 7, fees: 750, image: 'https://randomuser.me/api/portraits/women/33.jpg' },
-  { name: 'Dr. Rohit Desai', email: 'rohit.derm@hospital.com', specialization: 'dermatology', qualification: 'MBBS, MD (Skin)', experience: 12, fees: 950, image: 'https://randomuser.me/api/portraits/men/54.jpg' },
+  // NEUROLOGY - 5 doctors
+  { name: 'Dr. Ashok Krishnan', spec: 'neurology', exp: 17, fees: 1600, qual: 'MBBS, MD (Neurology)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Lakshmi Pillai', spec: 'neurology', exp: 15, fees: 1500, qual: 'MBBS, DM (Neurology)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Shweta Bansal', spec: 'neurology', exp: 11, fees: 1300, qual: 'MBBS, MD (Neurology)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Rajiv Malhotra', spec: 'neurology', exp: 19, fees: 1900, qual: 'MBBS, DNB (Neurology)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Neha Kapoor', spec: 'neurology', exp: 13, fees: 1400, qual: 'MBBS, MD (Neurology)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
 
-  // General Practice
-  { name: 'Dr. Sunita Reddy', email: 'sunita.gp@hospital.com', specialization: 'general practice', qualification: 'MBBS', experience: 5, fees: 500, image: 'https://randomuser.me/api/portraits/women/21.jpg' },
-  { name: 'Dr. Arjun Nair', email: 'arjun.gp@hospital.com', specialization: 'general practice', qualification: 'MBBS, DNB', experience: 8, fees: 600, image: 'https://randomuser.me/api/portraits/men/71.jpg' },
-  { name: 'Dr. Kavita Joshi', email: 'kavita.gp@hospital.com', specialization: 'general practice', qualification: 'MBBS, MD', experience: 6, fees: 550, image: 'https://randomuser.me/api/portraits/women/55.jpg' },
-  { name: 'Dr. Manoj Kumar', email: 'manoj.gp@hospital.com', specialization: 'general practice', qualification: 'MBBS', experience: 10, fees: 700, image: 'https://randomuser.me/api/portraits/men/28.jpg' },
+  // DENTIST - 5 doctors
+  { name: 'Dr. Naveen Kumar', spec: 'dentist', exp: 7, fees: 700, qual: 'BDS, MDS (Orthodontics)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Pooja Nair', spec: 'dentist', exp: 9, fees: 800, qual: 'BDS, MDS (Prosthodontics)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Vikram Singh', spec: 'dentist', exp: 12, fees: 900, qual: 'BDS, MDS (Oral Surgery)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Anjali Verma', spec: 'dentist', exp: 6, fees: 650, qual: 'BDS', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Rohan Das', spec: 'dentist', exp: 10, fees: 850, qual: 'BDS, MDS (Periodontics)', avail: ['Monday', 'Wednesday', 'Friday'] },
 
-  // Pediatrics
-  { name: 'Dr. Pooja Iyer', email: 'pooja.ped@hospital.com', specialization: 'pediatrics', qualification: 'MBBS, MD (Pediatrics)', experience: 9, fees: 800, image: 'https://randomuser.me/api/portraits/women/68.jpg' },
-  { name: 'Dr. Ravi Verma', email: 'ravi.ped@hospital.com', specialization: 'pediatrics', qualification: 'MBBS, DCH', experience: 11, fees: 850, image: 'https://randomuser.me/api/portraits/men/41.jpg' },
-  { name: 'Dr. Deepa Shah', email: 'deepa.ped@hospital.com', specialization: 'pediatrics', qualification: 'MBBS, MD, FIAP', experience: 13, fees: 950, image: 'https://randomuser.me/api/portraits/women/72.jpg' },
-  { name: 'Dr. Anil Kapoor', email: 'anil.ped@hospital.com', specialization: 'pediatrics', qualification: 'MBBS, DNB (Pediatrics)', experience: 7, fees: 750, image: 'https://randomuser.me/api/portraits/men/63.jpg' },
+  // DERMATOLOGY - 5 doctors
+  { name: 'Dr. Priya Sharma', spec: 'dermatology', exp: 12, fees: 1200, qual: 'MBBS, MD (Dermatology)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Suresh Menon', spec: 'dermatology', exp: 14, fees: 1300, qual: 'MBBS, DNB (Dermatology)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Deepa Rao', spec: 'dermatology', exp: 10, fees: 1100, qual: 'MBBS, MD (Dermatology)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Arjun Patel', spec: 'dermatology', exp: 15, fees: 1400, qual: 'MBBS, MD (Dermatology)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Swati Deshmukh', spec: 'dermatology', exp: 8, fees: 1000, qual: 'MBBS, MD (Dermatology)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
 
-  // Surgery
-  { name: 'Dr. Karan Malhotra', email: 'karan.surg@hospital.com', specialization: 'surgery', qualification: 'MBBS, MS (General Surgery)', experience: 16, fees: 1500, image: 'https://randomuser.me/api/portraits/men/52.jpg' },
-  { name: 'Dr. Meena Agarwal', email: 'meena.surg@hospital.com', specialization: 'surgery', qualification: 'MBBS, MS, FICS', experience: 14, fees: 1400, image: 'https://randomuser.me/api/portraits/women/47.jpg' },
-  { name: 'Dr. Suresh Reddy', email: 'suresh.surg@hospital.com', specialization: 'surgery', qualification: 'MBBS, MS, FRCS', experience: 20, fees: 1800, image: 'https://randomuser.me/api/portraits/men/75.jpg' },
-  { name: 'Dr. Divya Menon', email: 'divya.surg@hospital.com', specialization: 'surgery', qualification: 'MBBS, MS (Surgery)', experience: 12, fees: 1300, image: 'https://randomuser.me/api/portraits/women/58.jpg' },
+  // ORTHOPEDICS - 5 doctors
+  { name: 'Dr. Amit Singh', spec: 'orthopedics', exp: 18, fees: 1800, qual: 'MBBS, MS (Orthopedics)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Ramesh Kumar', spec: 'orthopedics', exp: 20, fees: 2000, qual: 'MBBS, DNB (Orthopedics)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Sunita Joshi', spec: 'orthopedics', exp: 16, fees: 1700, qual: 'MBBS, MS (Orthopedics)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Prakash Yadav', spec: 'orthopedics', exp: 14, fees: 1500, qual: 'MBBS, MS (Orthopedics)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Ritu Agarwal', spec: 'orthopedics', exp: 12, fees: 1400, qual: 'MBBS, DNB (Orthopedics)', avail: ['Monday', 'Wednesday', 'Friday'] },
 
-  // Neurology
-  { name: 'Dr. Ashok Krishnan', email: 'ashok.neuro@hospital.com', specialization: 'neurology', qualification: 'MBBS, MD, DM (Neurology)', experience: 17, fees: 1600, image: 'https://randomuser.me/api/portraits/men/69.jpg' },
-  { name: 'Dr. Lakshmi Pillai', email: 'lakshmi.neuro@hospital.com', specialization: 'neurology', qualification: 'MBBS, MD (Medicine), DM', experience: 15, fees: 1500, image: 'https://randomuser.me/api/portraits/women/62.jpg' },
-  { name: 'Dr. Ramesh Chandra', email: 'ramesh.neuro@hospital.com', specialization: 'neurology', qualification: 'MBBS, DNB (Neurology)', experience: 13, fees: 1400, image: 'https://randomuser.me/api/portraits/men/38.jpg' },
-  { name: 'Dr. Shweta Bansal', email: 'shweta.neuro@hospital.com', specialization: 'neurology', qualification: 'MBBS, MD, DM (Neuro)', experience: 11, fees: 1300, image: 'https://randomuser.me/api/portraits/women/29.jpg' },
+  // PEDIATRICS - 5 doctors
+  { name: 'Dr. Sneha Patel', spec: 'pediatrics', exp: 10, fees: 1000, qual: 'MBBS, MD (Pediatrics)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Manish Khanna', spec: 'pediatrics', exp: 13, fees: 1200, qual: 'MBBS, DNB (Pediatrics)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Nisha Bhatt', spec: 'pediatrics', exp: 9, fees: 950, qual: 'MBBS, MD (Pediatrics)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Kiran Bose', spec: 'pediatrics', exp: 15, fees: 1300, qual: 'MBBS, MD (Pediatrics)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Vivek Saxena', spec: 'pediatrics', exp: 11, fees: 1100, qual: 'MBBS, MD (Pediatrics)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
 
-  // Psychiatry
-  { name: 'Dr. Varun Saxena', email: 'varun.psych@hospital.com', specialization: 'psychiatry', qualification: 'MBBS, MD (Psychiatry)', experience: 10, fees: 1000, image: 'https://randomuser.me/api/portraits/men/44.jpg' },
-  { name: 'Dr. Isha Chopra', email: 'isha.psych@hospital.com', specialization: 'psychiatry', qualification: 'MBBS, DPM', experience: 8, fees: 900, image: 'https://randomuser.me/api/portraits/women/36.jpg' },
-  { name: 'Dr. Alok Bhardwaj', email: 'alok.psych@hospital.com', specialization: 'psychiatry', qualification: 'MBBS, MD, DNB', experience: 12, fees: 1100, image: 'https://randomuser.me/api/portraits/men/56.jpg' },
-  { name: 'Dr. Shalini Rao', email: 'shalini.psych@hospital.com', specialization: 'psychiatry', qualification: 'MBBS, MD (Psych)', experience: 9, fees: 950, image: 'https://randomuser.me/api/portraits/women/50.jpg' },
+  // GENERAL PRACTICE - 5 doctors
+  { name: 'Dr. Rajesh Kumar', spec: 'general_practice', exp: 8, fees: 800, qual: 'MBBS', avail: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] },
+  { name: 'Dr. Seema Mishra', spec: 'general_practice', exp: 10, fees: 900, qual: 'MBBS', avail: ['Monday', 'Wednesday', 'Friday', 'Saturday'] },
+  { name: 'Dr. Harish Chand', spec: 'general_practice', exp: 12, fees: 1000, qual: 'MBBS, MD', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Rekha Devi', spec: 'general_practice', exp: 7, fees: 750, qual: 'MBBS', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Sanjiv Chopra', spec: 'general_practice', exp: 15, fees: 1200, qual: 'MBBS, MD', avail: ['Tuesday', 'Thursday', 'Saturday'] },
 
-  // Dentist
-  { name: 'Dr. Naveen Kumar', email: 'naveen.dent@hospital.com', specialization: 'dentist', qualification: 'BDS, MDS', experience: 7, fees: 700, image: 'https://randomuser.me/api/portraits/men/33.jpg' },
-  { name: 'Dr. Ritu Singh', email: 'ritu.dent@hospital.com', specialization: 'dentist', qualification: 'BDS, MDS (Orthodontics)', experience: 9, fees: 800, image: 'https://randomuser.me/api/portraits/women/41.jpg' },
-  { name: 'Dr. Gaurav Sharma', email: 'gaurav.dent@hospital.com', specialization: 'dentist', qualification: 'BDS, MDS (Prosthodontics)', experience: 11, fees: 850, image: 'https://randomuser.me/api/portraits/men/61.jpg' },
-  { name: 'Dr. Anita Deshmukh', email: 'anita.dent@hospital.com', specialization: 'dentist', qualification: 'BDS, MDS', experience: 6, fees: 650, image: 'https://randomuser.me/api/portraits/women/27.jpg' },
-
-  // Emergency Medicine
-  { name: 'Dr. Mohit Arora', email: 'mohit.em@hospital.com', specialization: 'emergency medicine', qualification: 'MBBS, MD (Emergency)', experience: 10, fees: 1200, image: 'https://randomuser.me/api/portraits/men/48.jpg' },
-  { name: 'Dr. Sapna Jain', email: 'sapna.em@hospital.com', specialization: 'emergency medicine', qualification: 'MBBS, DNB (Emergency)', experience: 8, fees: 1100, image: 'https://randomuser.me/api/portraits/women/39.jpg' },
-  { name: 'Dr. Rahul Pandey', email: 'rahul.em@hospital.com', specialization: 'emergency medicine', qualification: 'MBBS, MRCEM', experience: 12, fees: 1300, image: 'https://randomuser.me/api/portraits/men/77.jpg' },
-  { name: 'Dr. Nisha Bose', email: 'nisha.em@hospital.com', specialization: 'emergency medicine', qualification: 'MBBS, MD (EM)', experience: 9, fees: 1150, image: 'https://randomuser.me/api/portraits/women/74.jpg' },
+  // GYNECOLOGY - 5 doctors
+  { name: 'Dr. Anita Desai', spec: 'gynecology', exp: 14, fees: 1400, qual: 'MBBS, MD (OB/GYN)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Kavya Reddy', spec: 'gynecology', exp: 16, fees: 1600, qual: 'MBBS, DGO', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Shruti Nambiar', spec: 'gynecology', exp: 12, fees: 1300, qual: 'MBBS, MD (OB/GYN)', avail: ['Monday', 'Wednesday', 'Friday'] },
+  { name: 'Dr. Radha Krishnan', spec: 'gynecology', exp: 18, fees: 1700, qual: 'MBBS, DNB (OB/GYN)', avail: ['Tuesday', 'Thursday', 'Saturday'] },
+  { name: 'Dr. Geeta Srinivasan', spec: 'gynecology', exp: 10, fees: 1200, qual: 'MBBS, MD (OB/GYN)', avail: ['Monday', 'Wednesday', 'Friday'] }
 ];
 
 async function seedDoctors() {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/hospital';
+    
+    await mongoose.connect(MONGO_URI);
     console.log('✅ Connected to MongoDB');
 
-    // Clear existing doctors
-    await User.deleteMany({ role: 'doctor' });
+    // Clear existing data
     await Doctor.deleteMany({});
+    await User.deleteMany({ role: 'doctor' });
     console.log('🗑️  Cleared existing doctors');
 
-    // Create doctors
-    for (const doc of sampleDoctors) {
+    let count = 0;
+    for (const doc of doctorsData) {
       // Create user account
       const hashedPassword = await bcrypt.hash('doctor123', 10);
-      const user = await User.create({
+      const email = doc.name.toLowerCase().replace(/\s+/g, '.').replace('dr.', '') + '@hospital.com';
+      
+      const user = new User({
         name: doc.name,
-        email: doc.email,
+        email: email,
         password: hashedPassword,
-        phone: '1234567890',
-        role: 'doctor',
-        profileImage: doc.image
+        phone: `98765${String(43210 + count).padStart(5, '0')}`,
+        role: 'doctor'
       });
+      await user.save();
 
-      // Create doctor profile
-      await Doctor.create({
-        user: user._id,
-        specialization: doc.specialization,
-        qualification: doc.qualification,
-        experience: doc.experience,
-        feesPerSession: doc.fees,
-        isAvailable: true
+      // Create doctor profile with all required fields
+      const doctor = new Doctor({
+        user: user._id,               // ✅ REQUIRED
+        specialization: doc.spec,
+        qualification: doc.qual,       // ✅ REQUIRED
+        experience: doc.exp,
+        feesPerSession: doc.fees,      // ✅ REQUIRED (not 'fees')
+        availability: doc.avail
       });
-
-      console.log(`✅ Created doctor: ${doc.name}`);
+      await doctor.save();
+      
+      count++;
     }
 
-    console.log(`\n🎉 Successfully seeded ${sampleDoctors.length} doctors!`);
-    console.log('📝 All doctors have password: doctor123');
-    console.log('🖼️  Each doctor has a unique profile image');
-    process.exit(0);
+    console.log(`✅ ${count} doctors seeded successfully\n`);
+
+    // Display summary
+    const specs = [...new Set(doctorsData.map(d => d.spec))];
+    console.log('🏥 Doctors by Specialization:\n');
+    for (const spec of specs) {
+      const specDoctors = doctorsData.filter(d => d.spec === spec);
+      console.log(`📌 ${spec.toUpperCase()} (${specDoctors.length} doctors)`);
+    }
+
+    mongoose.connection.close();
   } catch (error) {
     console.error('❌ Error seeding doctors:', error);
     process.exit(1);

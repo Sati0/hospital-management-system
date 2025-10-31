@@ -6,23 +6,25 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background: #1a1a1a;
-  color: #ffffff;
+  background: #f5f5f5;
+  color: #333333;
 }
 
 .App {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
 }
 
 .app-header {
-  background: #2d2d2d;
+  background: linear-gradient(135deg, #4a9eff 0%, #3a7edf 100%);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 3px solid #FFD700;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .header-left {
@@ -41,19 +43,21 @@ body {
 }
 
 .logout-btn {
-  background: transparent;
-  border: 2px solid #4a9eff;
+  background: #ffffff;
+  border: 2px solid #ffffff;
   color: #4a9eff;
   padding: 0.5rem 1.5rem;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
+  font-weight: 600;
   transition: all 0.3s;
 }
 
 .logout-btn:hover {
-  background: #4a9eff;
+  background: transparent;
   color: white;
+  border-color: white;
 }
 
 .app-container {
@@ -63,8 +67,10 @@ body {
 
 .sidebar {
   width: 250px;
-  background: #2d2d2d;
+  background: #f8f9fa;
   padding: 2rem 0;
+  border-right: 1px solid #e0e0e0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-nav {
@@ -76,7 +82,7 @@ body {
 .sidebar-item {
   background: transparent;
   border: none;
-  color: #b0b0b0;
+  color: #666666;
   padding: 1rem 2rem;
   text-align: left;
   font-size: 1rem;
@@ -88,14 +94,15 @@ body {
 }
 
 .sidebar-item:hover {
-  background: #3d3d3d;
-  color: #ffffff;
+  background: #e3f2ff;
+  color: #4a9eff;
 }
 
 .sidebar-item.active {
-  background: #4d4d4d;
-  color: #FFD700;
-  border-left: 4px solid #FFD700;
+  background: #e3f2ff;
+  color: #4a9eff;
+  border-left: 4px solid #4a9eff;
+  font-weight: 600;
 }
 
 .sidebar-icon {
@@ -105,20 +112,21 @@ body {
 .main-content {
   flex: 1;
   padding: 2rem;
-  background: #1a1a1a;
+  background: #fafafa;
   overflow-y: auto;
 }
 
 .content-card {
-  background: #2d2d2d;
-  border: 4px solid #FFD700;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 2rem;
   min-height: 500px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .content-card h2 {
-  color: #FFD700;
+  color: #4a9eff;
   margin-bottom: 2rem;
   font-size: 1.8rem;
 }
@@ -128,17 +136,37 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #1a1a1a;
+  background-image: url('https://d2ms8rpfqc4h24.cloudfront.net/feature_image_777f799bdb.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   padding: 2rem;
+  position: relative;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.88);
+  z-index: 1;
 }
 
 .login-card {
-  background: #2d2d2d;
-  border: 4px solid #FFD700;
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #4a9eff;
   border-radius: 15px;
   padding: 3rem;
   max-width: 500px;
   width: 100%;
+  box-shadow: 0 8px 32px rgba(74, 158, 255, 0.35);
+  backdrop-filter: blur(10px);
 }
 
 .login-header {
@@ -152,12 +180,12 @@ body {
 }
 
 .login-header h1 {
-  color: #FFD700;
+  color: #4a9eff;
   margin-bottom: 0.5rem;
 }
 
 .login-header p {
-  color: #b0b0b0;
+  color: #666666;
 }
 
 .role-selector {
@@ -169,9 +197,9 @@ body {
 .role-selector button {
   flex: 1;
   padding: 1rem;
-  background: #3d3d3d;
-  border: 2px solid #4d4d4d;
-  color: #b0b0b0;
+  background: #f5f5f5;
+  border: 2px solid #e0e0e0;
+  color: #666666;
   border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
@@ -192,24 +220,25 @@ body {
 
 .login-form input, .login-form select {
   padding: 0.75rem;
-  background: #3d3d3d;
-  border: 2px solid #4d4d4d;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
-  color: white;
+  color: #333333;
   font-size: 1rem;
 }
 
 .login-form input:focus, .login-form select:focus {
   outline: none;
   border-color: #4a9eff;
+  background: #ffffff;
 }
 
 .submit-btn {
   padding: 1rem;
-  background: #FFD700;
+  background: #4a9eff;
   border: none;
   border-radius: 8px;
-  color: #1a1a1a;
+  color: white;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
@@ -218,8 +247,9 @@ body {
 }
 
 .submit-btn:hover {
-  background: #ffed4e;
+  background: #3a8eef;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
 }
 
 .submit-btn:disabled {
@@ -228,17 +258,18 @@ body {
 }
 
 .error-message {
-  background: #ff4444;
-  color: white;
+  background: #ffe3e3;
+  color: #cc0000;
   padding: 0.75rem;
   border-radius: 8px;
   text-align: center;
+  border: 1px solid #ffcccc;
 }
 
 .toggle-auth {
   text-align: center;
   margin-top: 1.5rem;
-  color: #b0b0b0;
+  color: #666666;
 }
 
 .toggle-auth button {
@@ -261,7 +292,8 @@ body {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  border: 4px solid #FFD700;
+  border: 4px solid #4a9eff;
+  box-shadow: 0 4px 10px rgba(74, 158, 255, 0.2);
 }
 
 .info-grid {
@@ -272,20 +304,22 @@ body {
 }
 
 .info-item {
-  background: #3d3d3d;
+  background: #f8f9fa;
   padding: 1rem;
   border-radius: 8px;
+  border: 1px solid #e0e0e0;
 }
 
 .info-item label {
   display: block;
-  color: #b0b0b0;
+  color: #666666;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .info-item span {
-  color: #ffffff;
+  color: #333333;
   font-size: 1.1rem;
 }
 
@@ -307,10 +341,10 @@ body {
 .search-form input, .search-form select {
   flex: 1;
   padding: 0.75rem;
-  background: #3d3d3d;
-  border: 2px solid #4d4d4d;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
-  color: white;
+  color: #333333;
   font-size: 1rem;
 }
 
@@ -336,16 +370,18 @@ body {
 }
 
 .doctor-card {
-  background: #3d3d3d;
+  background: #ffffff;
   padding: 1.5rem;
   border-radius: 10px;
-  border: 2px solid #4d4d4d;
+  border: 2px solid #e0e0e0;
   transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .doctor-card:hover {
-  border-color: #FFD700;
+  border-color: #4a9eff;
   transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(74, 158, 255, 0.2);
 }
 
 .doctor-card h3 {
@@ -355,24 +391,24 @@ body {
 
 .doctor-card p {
   margin-bottom: 0.5rem;
-  color: #b0b0b0;
+  color: #666666;
 }
 
 .book-btn {
   width: 100%;
   margin-top: 1rem;
   padding: 0.75rem;
-  background: #FFD700;
+  background: #4a9eff;
   border: none;
   border-radius: 8px;
-  color: #1a1a1a;
+  color: white;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .book-btn:hover {
-  background: #ffed4e;
+  background: #3a8eef;
 }
 
 .appointments-list {
@@ -382,10 +418,11 @@ body {
 }
 
 .appointment-item {
-  background: #3d3d3d;
+  background: #ffffff;
   padding: 1.5rem;
   border-radius: 10px;
-  border: 2px solid #4d4d4d;
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .appointment-header {
@@ -407,34 +444,38 @@ body {
 }
 
 .status-pending {
-  background: #ff9800;
-  color: white;
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
 }
 
 .status-confirmed {
-  background: #4caf50;
-  color: white;
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 .status-completed {
-  background: #2196f3;
-  color: white;
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
 }
 
 .status-cancelled {
-  background: #f44336;
-  color: white;
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 .appointment-details p {
   margin-bottom: 0.5rem;
-  color: #b0b0b0;
+  color: #666666;
 }
 
 .cancel-btn {
   margin-top: 1rem;
   padding: 0.5rem 1.5rem;
-  background: #f44336;
+  background: #dc3545;
   border: none;
   border-radius: 8px;
   color: white;
@@ -443,13 +484,15 @@ body {
 }
 
 .cancel-btn:hover {
-  background: #d32f2f;
+  background: #c82333;
 }
 
 .empty-state {
   text-align: center;
   padding: 3rem;
-  color: #b0b0b0;
+  color: #999999;
+  background: #f8f9fa;
+  border-radius: 10px;
 }
 
 .modal-overlay {
@@ -458,7 +501,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -466,33 +509,35 @@ body {
 }
 
 .modal-content {
-  background: #2d2d2d;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 15px;
-  border: 4px solid #FFD700;
+  border: 2px solid #4a9eff;
   max-width: 500px;
   width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content h3 {
-  color: #FFD700;
+  color: #4a9eff;
   margin-bottom: 1.5rem;
 }
 
 .modal-content label {
   display: block;
-  color: #b0b0b0;
+  color: #666666;
   margin-bottom: 0.5rem;
   margin-top: 1rem;
+  font-weight: 600;
 }
 
 .modal-content input, .modal-content select, .modal-content textarea {
   width: 100%;
   padding: 0.75rem;
-  background: #3d3d3d;
-  border: 2px solid #4d4d4d;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
-  color: white;
+  color: #333333;
   font-size: 1rem;
 }
 
@@ -518,8 +563,8 @@ body {
 }
 
 .modal-actions button[type="submit"] {
-  background: #FFD700;
-  color: #1a1a1a;
+  background: #4a9eff;
+  color: white;
   font-weight: bold;
 }
 
